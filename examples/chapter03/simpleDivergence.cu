@@ -112,7 +112,7 @@ int main(int argc, char **argv)
     printf("%s using Device %d: %s\n", argv[0], dev, deviceProp.name);
 
     // set up data size
-    int size = 64;
+    int size = 1024;//64;
     int blocksize = 64;
 
     if(argc > 1) blocksize = atoi(argv[1]);
@@ -132,50 +132,49 @@ int main(int argc, char **argv)
     CHECK(cudaMalloc((float**)&d_C, nBytes));
 
     // run a warmup kernel to remove overhead
-    size_t iStart, iElaps;
     CHECK(cudaDeviceSynchronize());
-    iStart = seconds();
+    auto iStart = hrPoint();
     warmingup<<<grid, block>>>(d_C);
     CHECK(cudaDeviceSynchronize());
-    iElaps = seconds() - iStart;
-    printf("warmup      <<< %4d %4d >>> elapsed %d sec \n", grid.x, block.x,
-           iElaps );
+    auto iElaps = duration_cast<microseconds>(hrPoint() - iStart);
+    printf("warmup      <<< %4d %4d >>> elapsed %Id mksec \n", grid.x, block.x,
+           iElaps.count() );
     CHECK(cudaGetLastError());
 
     // run kernel 1
-    iStart = seconds();
+    iStart = hrPoint();
     mathKernel1<<<grid, block>>>(d_C);
     CHECK(cudaDeviceSynchronize());
-    iElaps = seconds() - iStart;
-    printf("mathKernel1 <<< %4d %4d >>> elapsed %d sec \n", grid.x, block.x,
-           iElaps );
+    iElaps = duration_cast<microseconds>(hrPoint() - iStart);
+    printf("mathKernel1 <<< %4d %4d >>> elapsed %Id mksec \n", grid.x, block.x,
+           iElaps.count() );
     CHECK(cudaGetLastError());
 
     // run kernel 3
-    iStart = seconds();
+    iStart = hrPoint();
     mathKernel2<<<grid, block>>>(d_C);
     CHECK(cudaDeviceSynchronize());
-    iElaps = seconds() - iStart;
-    printf("mathKernel2 <<< %4d %4d >>> elapsed %d sec \n", grid.x, block.x,
-           iElaps );
+    iElaps = duration_cast<microseconds>(hrPoint() - iStart);
+    printf("mathKernel2 <<< %4d %4d >>> elapsed %Id mksec \n", grid.x, block.x,
+           iElaps.count() );
     CHECK(cudaGetLastError());
 
     // run kernel 3
-    iStart = seconds();
+    iStart = hrPoint();
     mathKernel3<<<grid, block>>>(d_C);
     CHECK(cudaDeviceSynchronize());
-    iElaps = seconds() - iStart;
-    printf("mathKernel3 <<< %4d %4d >>> elapsed %d sec \n", grid.x, block.x,
-           iElaps);
+    iElaps = duration_cast<microseconds>(hrPoint() - iStart);
+    printf("mathKernel3 <<< %4d %4d >>> elapsed %Id mksec \n", grid.x, block.x,
+           iElaps.count());
     CHECK(cudaGetLastError());
 
     // run kernel 4
-    iStart = seconds();
+    iStart = hrPoint();
     mathKernel4<<<grid, block>>>(d_C);
     CHECK(cudaDeviceSynchronize());
-    iElaps = seconds() - iStart;
-    printf("mathKernel4 <<< %4d %4d >>> elapsed %d sec \n", grid.x, block.x,
-           iElaps);
+    iElaps = duration_cast<microseconds>(hrPoint() - iStart);
+    printf("mathKernel4 <<< %4d %4d >>> elapsed %Id mksec \n", grid.x, block.x,
+           iElaps.count());
     CHECK(cudaGetLastError());
 
     // free gpu memory and reset divece

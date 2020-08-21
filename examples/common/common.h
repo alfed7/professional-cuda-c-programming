@@ -1,4 +1,8 @@
+#ifdef _WIN32
+#include "gettimeofday.h"
+#else
 #include <sys/time.h>
+#endif
 
 #ifndef _COMMON_H
 #define _COMMON_H
@@ -69,6 +73,15 @@ inline double seconds()
     struct timezone tzp;
     int i = gettimeofday(&tp, &tzp);
     return ((double)tp.tv_sec + (double)tp.tv_usec * 1.e-6);
+}
+
+#include <chrono> 
+using namespace std; 
+using namespace std::chrono; 
+
+inline steady_clock::time_point hrPoint()
+{
+    return high_resolution_clock::now();
 }
 
 #endif // _COMMON_H
